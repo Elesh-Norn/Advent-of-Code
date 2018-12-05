@@ -3,7 +3,6 @@ import sys
 test = 'dabAcCaCBAcCcaDA'
 count = 0
 
-
 def get_input(filename):
     file = open(filename, "r")
     word = None
@@ -33,12 +32,35 @@ def remove_doubles(list):
 
     return "".join(d_list)
 
-
-print(list(test))
-print(remove_doubles(list(test)))
 print(len(remove_doubles(list(test))))
 
 a = remove_doubles(list(get_input('Day_5_input')))
-a = remove_doubles(list(get_input('Day_5_input')))
 print(len(a))
 
+# PART 2
+
+def remove_doubles2(list, letter):
+    global count
+    d_list = []
+    for x in list:
+
+        if x == letter.upper():
+            continue
+        if x == letter.lower():
+            continue
+        else:
+            d_list.append(x)
+
+    d_list = remove_doubles(d_list)
+
+    return "".join(d_list)
+
+def part_2(list):
+    answer_dic = {}
+
+    for letter in ['a','z','e','r','t','y','u','i','o','p','q','s','d','f','g','h','j','k','l','m','w','x','c','v','b','n']:
+        answer_dic[letter] = len(remove_doubles2(list, letter))
+
+    return min(zip(answer_dic.values(), answer_dic.keys()))
+
+print(part_2(list(get_input('Day_5_input'))))
