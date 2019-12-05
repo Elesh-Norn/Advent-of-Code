@@ -16,77 +16,49 @@ class Outcode:
         self.mode1 = int(outcode[-3]) if len(outcode) > 2 else 0
         self.mode2 = int(outcode[-4]) if len(outcode) > 3 else 0
         self.mode3 = int(outcode[-5]) if len(outcode) > 4 else 0
-        self.jump_table = {
-            1: 4,
-            2: 4,
-            3: 2,
-            4: 2,
-            5: 3,
-            6: 3,
-            7: 4,
-            8: 4
-        }
-        if self.opcode < 3 or 99 > self.opcode > 4 :
+        if self.opcode < 3 or 99 > self.opcode > 4:
             self.input_1 = intcodes[intcodes[pointer + 1]] if self.mode1 == 0 else intcodes[pointer + 1]
             self.input_2 = intcodes[intcodes[pointer + 2]] if self.mode2 == 0 else intcodes[pointer + 2]
 
     def add(self, intcodes, pointer):
-        if self.mode3 == 0:
-            intcodes[intcodes[pointer + 3]] = self.input_1 + self.input_2
-        else:
-            intcodes[pointer + 3] = self.input_1 + self.input_2
-
-        return pointer + self.jump_table[self.opcode]
+        intcodes[intcodes[pointer + 3]] = self.input_1 + self.input_2
+        return pointer + 4
 
     def mul(self, intcodes, pointer):
-        if self.mode3 == 0:
-            intcodes[intcodes[pointer + 3]] = self.input_1 * self.input_2
-        else:
-            intcodes[pointer + 3] = self.input_1 * self.input_2
-
-        return pointer + self.jump_table[self.opcode]
+        intcodes[intcodes[pointer + 3]] = self.input_1 * self.input_2
+        return pointer + 4
 
     def read_input(self, intcodes, pointer):
         if self.mode1 == 0:
             intcodes[intcodes[pointer + 1]] = int(input("Please input a digit"))
         else:
             intcodes[pointer + 1] = int(input("Please input a digit"))
-
-        return pointer + self.jump_table[self.opcode]
+        return pointer + 2
 
     def print_output(self, intcodes, pointer):
         output = intcodes[intcodes[pointer + 1]] if self.mode1 == 0 else intcodes[pointer + 1]
         print(output)
-
-        return pointer + self.jump_table[self.opcode]
+        return pointer + 2
 
     def is_less_than(self, intcodes, pointer):
-        if self.mode3 == 0:
-            intcodes[intcodes[pointer + 3]] = 1 if self.input_1 < self.input_2 else 0
-        else:
-            intcodes[pointer + 3] = 1 if self.input_1 < self.input_2 else 0
-
-        return pointer + self.jump_table[self.opcode]
+        intcodes[intcodes[pointer + 3]] = 1 if self.input_1 < self.input_2 else 0
+        return pointer + 4
 
     def is_equal_to(self, intcodes, pointer):
-        if self.mode3 == 0:
-            intcodes[intcodes[pointer + 3]] = 1 if self.input_1 == self.input_2 else 0
-        else:
-            intcodes[pointer + 3] = 1 if self.input_1 == self.input_2 else 0
-
-        return pointer + self.jump_table[self.opcode]
+        intcodes[intcodes[pointer + 3]] = 1 if self.input_1 == self.input_2 else 0
+        return pointer + 4
 
     def jump_if_false(self, intcodes, pointer):
         if self.input_1 != 0:
             return self.input_2
         else:
-            return pointer + self.jump_table[self.opcode]
+            return pointer + 3
 
     def jump_if_true(self, intcodes, pointer):
         if self.input_1 == 0:
             return self.input_2
         else:
-            return pointer + self.jump_table[self.opcode]
+            return pointer + 3
 
 def read_intcodes(intcodes):
     pointer = 0
