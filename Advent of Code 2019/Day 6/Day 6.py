@@ -42,7 +42,7 @@ def explore_space(orbits, backref):
             crawl_map(x, 0)
     count = 0
     for k in orbits.keys():
-        count += len(o[k]) + galaxy_map[k]
+        count += len(orbits[k]) + galaxy_map[k]
     return count
 
 
