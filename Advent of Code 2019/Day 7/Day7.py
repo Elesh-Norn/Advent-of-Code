@@ -146,20 +146,23 @@ def ampli():
 
 def feedback_loop():
     maxi = float('-inf')
-
     for x in range(56789, 100000):
 
         digiset = set()
-        AmpliChain = []
+        phases = []
         for digit in str(x):
             if digit in digiset or int(digit) < 5:
                 break
             digiset.add(digit)
-            amp = Amplifier(read_input())
-            amp.run(int(digit))
-            AmpliChain.append(amp)
+            phases.append(int(digit))
 
-        if len(AmpliChain) == 5:
+        if len(phases) == 5:
+            AmpliChain = []
+            for phase in phases:
+                amp = Amplifier(read_input())
+                amp.run(phase)
+                AmpliChain.append(amp)
+
             loop = True
             counter = 0
             output = 0
@@ -176,6 +179,7 @@ def feedback_loop():
 
     print(maxi)
 
+def resolve():
 
-ampli()
-feedback_loop()
+    ampli()
+    feedback_loop()
