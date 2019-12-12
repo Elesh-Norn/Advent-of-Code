@@ -10,42 +10,73 @@ def read_input():
 
 class Outcode:
 
-    def __init__(self, intcodes, pointer):
+    def __init__(self, intcodes, pointer, base):
         outcode = str(intcodes[pointer])
         self.opcode = int(outcode[-2:])
         self.mode1 = int(outcode[-3]) if len(outcode) > 2 else 0
         self.mode2 = int(outcode[-4]) if len(outcode) > 3 else 0
         self.mode3 = int(outcode[-5]) if len(outcode) > 4 else 0
         if self.opcode < 3 or 99 > self.opcode > 4:
-            self.input_1 = intcodes[intcodes[pointer + 1]] if self.mode1 == 0 else intcodes[pointer + 1]
-            self.input_2 = intcodes[intcodes[pointer + 2]] if self.mode2 == 0 else intcodes[pointer + 2]
+            if self.mode1 == 0:
+                self.input_1 = intcodes[intcodes[pointer + 1]]
+            elif self.mode1 == 1:
+                self.input_1 = intcodes[pointer + 1]
+            elif self.mode1 == 2:
+                self.input_1 = intcodes[base]
 
-    def add(self, intcodes: list, pointer: int)->int:
-        intcodes[intcodes[pointer + 3]] = self.input_1 + self.input_2
+            if self.mode2 == 0:
+                self.input_2 = intcodes[intcodes[pointer + 2]]
+            elif self.mode2 == 1:
+                self.input_2 = intcodes[pointer + 2]
+            elif self.mode2 == 2:
+                self.input_2 = intcodes[base]
+
+    def add(self, intcodes: list, pointer: int, base: int)->int:
+        if self.mode3 == 2:
+            intcodes[base] = self.input_1 + self.input2
+        else:
+            intcodes[intcodes[pointer + 3]] = self.input_1 + self.input_2
         return pointer + 4
 
-    def mul(self, intcodes: list, pointer: int)->int:
-        intcodes[intcodes[pointer + 3]] = self.input_1 * self.input_2
+    def mul(self, intcodes: list, pointer: int, base: int)->int:
+        if self.mode3 == 2:
+            intcodes[base] = self.input_1 * self.input2
+        else:
+            intcodes[intcodes[pointer + 3]] = self.input_1 * self.input_2
         return pointer + 4
 
-    def read_input(self, intcodes: list, pointer: int, code: int)->int:
+    def read_input(self, intcodes: list, pointer: int, base: int, code: int)->int:
         if self.mode1 == 0:
             intcodes[intcodes[pointer + 1]] = code
-        else:
+        elif self.mode1 == 1:
             intcodes[pointer + 1] = code
+        else:
+            intcodes[base] = code
         return pointer + 2
 
-    def print_output(self, intcodes: list, pointer: int)->int:
-        self.output = intcodes[intcodes[pointer + 1]] if self.mode1 == 0 else intcodes[pointer + 1]
+    def print_output(self, intcodes: list, pointer: int, base: int)->int:
+        if self.mode1 == 0:
+            self.output = intcodes[intcodes[pointer + 1]]
+        elif self.mode1==1:
+            self.output =intcodes[pointer + 1]
+        else:
+            self.output = intcodes[base]
         return pointer + 2
 
-    def is_less_than(self, intcodes: list, pointer: int)->int:
-        intcodes[intcodes[pointer + 3]] = 1 if self.input_1 < self.input_2 else 0
+    def is_less_than(self, intcodes: list, pointer: int, base: int)->int:
+        if self.mode3 == 0:
+            intcodes[intcodes[pointer + 3]] = 1 if self.input_1 < self.input_2 else 0
+        else:
+            intcodes[base] = 1 if self.input_1 < self.input_2 else 0
         return pointer + 4
 
-    def is_equal_to(self, intcodes: list, pointer: int)->int:
-        intcodes[intcodes[pointer + 3]] = 1 if self.input_1 == self.input_2 else 0
+    def is_equal_to(self, intcodes: list, pointer: int, base: int)->int:
+        if self.mode3 == 0:
+            intcodes[intcodes[pointer + 3]] = 1 if self.input_1 == self.input_2 else 0
+        else:
+            intcodes[base] = 1 if self.input_1 == self.input_2 else 0
         return pointer + 4
+
 
     def jump_if_false(self, intcodes, pointer: int)->int:
 
@@ -60,6 +91,9 @@ class Outcode:
         else:
             return pointer + 3
 
+    def ofset_base(self, intcodes, pointer: int, base: int)->(int, int):
+        base += self.input_1
+        return pointer + 2, base
 
 class Amplifier:
 
